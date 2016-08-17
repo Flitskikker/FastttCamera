@@ -157,6 +157,30 @@
 {
     [super viewDidLayoutSubviews];
     _previewLayer.frame = self.view.layer.bounds;
+    
+    // Fix preview layer orientation
+    if (_previewLayer.connection.supportsVideoOrientation) {
+        _previewLayer.connection.videoOrientation = [self interfaceOrientationToVideoOrientation:[UIApplication sharedApplication].statusBarOrientation];
+    }
+}
+
+- (AVCaptureVideoOrientation)interfaceOrientationToVideoOrientation:(UIInterfaceOrientation)orientation {
+    switch (orientation) {
+        case UIInterfaceOrientationPortrait:
+            return AVCaptureVideoOrientationPortrait;
+        case UIInterfaceOrientationPortraitUpsideDown:
+            return AVCaptureVideoOrientationPortraitUpsideDown;
+        case UIInterfaceOrientationLandscapeLeft:
+            return AVCaptureVideoOrientationLandscapeLeft;
+        case UIInterfaceOrientationLandscapeRight:
+            return AVCaptureVideoOrientationLandscapeRight;
+        default:
+            break;
+    }
+    
+    NSLog(@"Warning - Didn't recognize interface orientation (%d)", orientation);
+    
+    return AVCaptureVideoOrientationPortrait;
 }
 
 - (void)applicationWillEnterForeground:(NSNotification *)notification
